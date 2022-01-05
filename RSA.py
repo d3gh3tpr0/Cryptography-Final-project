@@ -157,7 +157,7 @@ class RSA(object):
             cipher += str(pow(m, self.e, self.N)) + " "
 
         return cipher
-
+    
     def decrypt(self, cipher):
         msg = ""
 

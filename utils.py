@@ -10,16 +10,42 @@ def check_user(user):
 def insert_user(user):
     conn = sqlite3.connect('DB/database.db')
     
+    # sql = '''
+    # INSERT INTO user(name, password, pubKey_e, pubKey_n) 
+    # VALUES (?, ?, ?, ?)
+    # '''
+    # conn.execute(sql, (user['name'], user['password'],
+    #                    user['pub_keys']['pubKey_e'], 
+    #                    user['pub_keys']['pubKey_n']))
+    # conn.commit()
     sql = '''
-    INSERT INTO user(name, password, pubKey_e, pubKey_n) 
-    VALUES (?, ?, ?, ?)
+    SELECT u.id 
+    from user u
+    where u.name=? and u.password=? and u.pubKey_e=? and u.pubKey_n=?
     '''
-    conn.execute(sql, (user['name'], user['password'],
+    id = conn.execute(sql, (user['name'], user['password'],
                        user['pub_keys']['pubKey_e'], 
-                       user['pub_keys']['pubKey_n']))
-    conn.commit()
+                       user['pub_keys']['pubKey_n'])).fetchone()
+                    
     conn.close()
+    return id
+    
 
+
+def sign_in(id, password):
+    conn = sqlite3.connect('DB/database.db')
+    sql ='''
+    SELECT * FROM user WHERE id = ?
+    '''
+    user = conn.execute(sql, (id,)).fetchone()
+    pass
+
+def insert_img(image):
+    buffer = image['buffer']
+    id_user = image['id_user']
+    img_name = image['name']
+    img_own = image['own']
+    pass
 
 
 
@@ -65,6 +91,11 @@ def add_comment(category_id, content):
 
 
 if __name__ == '__main__':
-    conn = sqlite3.connect('DB/database.db')
-    a = conn.execute('Select * from user').fetchall()
-    print(a)
+    user = {'name': 'Trung Hieu',
+            'password': 'yeuemhung',
+            'pub_keys': {
+                'pubKey_e' : 235,
+                'pubKey_n' : 37001
+            }
+    }
+    print(insert_user(user)[0])
