@@ -169,6 +169,14 @@ class RSA(object):
 
         return msg
 
+    def encrypt_pixel(self, x):
+        ans = pow(x, self.e, self.N)
+        return ans
+
+    def decrypt_pixel(self, x):
+        ans = pow(x, self.d, self.N)
+        return ans
+
 def encrypt(auth_code, pub_keys):
     rsa = RSA(8, pub_keys)
     return rsa.encrypt(auth_code)

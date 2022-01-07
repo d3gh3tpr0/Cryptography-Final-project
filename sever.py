@@ -14,6 +14,7 @@ def get_page():
                 {'name':'Phan Trung Hieu', 'id': '19127404'}, 
                 {'name':'Le Tien Hung', 'id': '19127412'}, 
                 {'name': 'Tran Huu Trong', 'id': '19127601'}
+                
             ],
             'name_group': '010412'}
     return jsonify({"data":data, "statusCode": 401, 
@@ -72,14 +73,45 @@ def sign_up_auth():
         return jsonify({"status":"failed", "statusCode": 401,
                         'message': 'Errors in sign-up process'})
 
-@app.route('/sign-in', methods=['POST'])
+@app.route('/sign-in', methods=['GET'])
 def sign_in():
-    pass
+    user_info = request.args
+    check_login = utils.sign_in(user_info)
+    if check_login:
+        list_info_img = utils.get_list_img(user_info)
+        return jsonify({"status": "success", "statusCode": 200,
+                        "message": "Log-in successfully",
+                        "list_info_img": list_info_img})
+    else:
+        return jsonify({"status": "failed", "statusCode": 401,
+                        "message": "Log-in failed"})
 
-
+@app.route('/upload-img', methods=['POST'])
+def upload_img():
+    id_user = request.args.get('id')
+    img = request.form
     
+    check_upload_img = utils.upload_img(id_user, img)
+    
+    if check_upload_img:
+        return jsonify({"status": "success", "statusCode": 200, 
+                        "message": "Upload image successfully"})
+    else:
+        return jsonify({"status": "failed", "statusCode": 401,
+                        "message": "Upload image failed"})
 
+@app.route('/download-img', methods=['GET'])  
+def download_img():
+    info = request.args
+    img = utils.download_img(info)
 
+    if img:
+        return jsonify({"status": "success", "statusCode":200,
+                        "message": "Download image successfully",
+                        "image": img})
+    else:
+        return jsonify({"status": "failed", "statusCode":401,
+                        "message": "Download image failed"})
 
 if __name__ == '__main__':
     app.run()
